@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Bus tracking-1</title>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
+    <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 align="center">Live tracking for Bus 1</h1>
+       <div id="map-canvas" style="width:100%;height:800px"></div>
+    </div>
+
+    <script>
+    window.lat = 28.54;
+    window.lng = 77.19;
+
+    var map;
+    var mark;
+    var lineCoords = [];
+      
+    var initialize = function() {
+      map  = new google.maps.Map(document.getElementById('map-canvas'), {center:{lat:lat,lng:lng},zoom:15});
+      mark = new google.maps.Marker(
+        {
+          position:{lat:lat, lng:lng},
+          animation: google.maps.Animation.DROP,
+//           icon:'measle_blue.png',  
+          map:map
+        }
+      );
+      marker.addListener('click', toggleBounce);
+
+    };
+
+    window.initialize = initialize;
+
+    var redraw = function(payload) {
+      console.log("hi");
+	text = payload.message
+	t = text.split(",")
+	    
+      lat = parseFloat(t[0]);
+      lng = parseFloat(t[1]);
+
+      map.setCenter({lat:lat, lng:lng, alt:0});
+      mark.setPosition({lat:lat, lng:lng, alt:0});
+      
+//       lineCoords.push(new google.maps.LatLng(lat, lng));
+
+//       var lineCoordinatesPath = new google.maps.Polyline({
+//         path: lineCoords,
+//         geodesic: true,
+//         strokeColor: '#2E10FF'
+//       });
+      
+//       lineCoordinatesPath.setMap(map);
+    };
+
+    var pnChannel = "map-bus1";
+
+    var pubnub = new PubNub({
+      publishKey:   'pub-c-27b94a8d-253c-4e9b-a169-a9b028a101cc',
+      subscribeKey: 'sub-c-dfa4069c-3b53-11e9-b221-7a660e69c40f',
+      ssl: true
+    });
+
+    pubnub.subscribe({channels: [pnChannel]});
+    pubnub.addListener({message:redraw});
+    
+// const reader = new FileReader();
+
+//     reader.onload = function(){
+//       var allText = reader.result;
+//                 var cord = [];
+//                 cord = allText.split(",");
+//                 var lat = parseFloat(cord[0]);
+//                 var long = parseFloat(cord[1]);
+//                 console.log(lat);
+//                 pubnub.publish({channel:pnChannel, message:{lat:lat,lng:long}});
+//     }
+
+
+//     var blob = null;
+// var xhr = new XMLHttpRequest(); 
+// xhr.open("GET", "new.txt" , true); 
+// xhr.responseType = "blob";//force the HTTP response, response-type header to be blob
+// xhr.onload = function() 
+// {
+    
+//     blob = xhr.response;
+//     setInterval(function(){
+//       reader.readAsText(blob);
+      
+//       // console.log("hi");
+//     },500);
+//     //xhr.response is now a blob object
+// }
+// xhr.send();
+// //     function readTextFile(file)
+// // {
+    
+    
+// //     rawFile.open("GET", file, false);
+// //     rawFile.onreadystatechange = function ()
+// //     {
+// //         if(rawFile.readyState === 4)
+// //         {
+// //             if(rawFile.status === 200 || rawFile.status == 0)
+// //             {
+// //                 var allText = rawFile.responseText;
+// //                 var cord = [];
+// //                 cord = allText.split(",");
+// //                 var lat = parseFloat(cord[0]);
+// //                 var long = parseFloat(cord[1]);
+// //                 pubnub.publish({channel:pnChannel, message:{lat:lat,lng:long}});
+// //             }
+// //         }
+// //     }
+// //     rawFile.send(null);
+// // }
+
+    
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAW0T4gJBIDxjW6wdkEYKbGm__P7RBPVwQ&callback=initialize"></script>
+  </body>
+</html>

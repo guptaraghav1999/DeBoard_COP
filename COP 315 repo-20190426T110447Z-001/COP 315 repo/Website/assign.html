@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>Assign route</title>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
+    <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+</head>
+<body align = "center">
+
+<h1> Select bus </h1>
+	
+<form id="bus_form" method="post" name="myform">
+  	<input id="bus1" type="radio" name="bus" value="1"> Bus 1 <br>
+	<input id="bus2" type="radio" name="bus" value="2"> Bus 2<br>
+	
+</form>
+<br>
+<br>
+
+<h1> Assign route </h1>
+
+<form id="route_form" method="post" name="myform">
+  	<input id="route1" type="radio" name="route" value="1"> Route 1 <br>
+	<input id="route2" type="radio" name="route" value="2"> Route 2<br>
+	<input id="route3" type="radio" name="route" value="3"> Route 3<br> <br> <br>
+	<input type="button" value="Update" id="submit" onclick="update()"/>
+</form>
+
+<h3> 
+	<a href = "select.html"> Go back to previous page </a>
+</h3>
+
+<script>
+	var route1 = [{"index":0 ,"name":"Main_Gate","lat": 28.545813,"long": 77.196516,"flag": 0}, {"index":1, "name":"Himadri_Circle","lat": 28.544908,"long": 77.194593,"flag": 0} , {"index":2, "name":"Lecture_Hall","lat": 28.544309,"long": 77.192719,"flag": 0}, {"index":3, "name":"Bharti","lat": 28.544539,"long": 77.190379,"flag": 0} , {"index":4, "name":"Hospital","lat": 28.545420,"long": 77.188244,"flag": 0} , {"index":5,"name": "Chaayos","lat": 28.545975,"long": 77.186868,"flag": 0} , {"index":6, "name":"SAC_Circle","lat": 28.546652,"long": 77.185249,"flag": 0} , {"index":7, "name":"T_Point","lat": 28.547375,"long": 77.183622,"flag": 0} , {"index":8, "name":"Jwala_Circle","lat": 28.548972,"long": 77.184461,"flag": 0}];
+
+	var route2 = [{"index":0 ,"name":"Main_Gate","lat": 28.545813,"long": 77.196516,"flag": 0} , {"index":1, "name":"Bharti","lat": 28.544539,"long": 77.190379,"flag": 0} , {"index":2, "name":"Hospital","lat": 28.545420,"long": 77.188244,"flag": 0} , {"index":3, "name":"SAC_Circle","lat": 28.546650,"long": 77.185234,"flag": 0} , {"index":4, "name":"T_Point","lat": 28.547375,"long": 77.183622,"flag": 0} , {"index":5, "name":"Jwala_Circle","lat": 28.548972,"long": 77.184461,"flag": 0}];
+
+
+	var route3 = [{"index":0, "name":"Jwala_Circle","lat": 28.548972,"long": 77.184461,"flag": 0} , {"index":1, "name":"T_Point","lat": 28.547375,"long": 77.183622,"flag": 0} , {"index":2, "name":"SAC_Circle","lat": 28.546650,"long": 77.185234,"flag": 0} , {"index":3, "name":"Hospital","lat": 28.545420,"long": 77.188244,"flag": 0} , {"index":4, "name":"Bharti","lat": 28.544539,"long": 77.190379,"flag": 0}];
+
+
+
+	var pubnub = new PubNub({
+      publishKey:   'pub-c-27b94a8d-253c-4e9b-a169-a9b028a101cc',
+      subscribeKey: 'sub-c-dfa4069c-3b53-11e9-b221-7a660e69c40f',
+      ssl: true,
+	reconnectPolicy: 'PNReconnectionPolicy.LINEAR'	
+    });
+        
+        var al = function(payload){
+        	alert("Updated");
+        	console.log("hi")    
+        };
+	  	pubnub.subscribe({channels: ['route-conf']});
+    	
+	    pubnub.addListener({message:al});
+	      
+	  
+
+	function update(){
+		var sendto = "0";
+		var route = "0";
+		if(document.getElementById("bus1").checked == true){
+			sendto = "route-bus1";
+		}else{
+			sendto = "route-bus2";
+		}
+
+		if(document.getElementById("route1").checked == true){
+			route = route1
+		}else if(document.getElementById("route2").checked == true){
+			route = route2
+		}else{
+			route = route3
+		}
+		pubnub.publish({channel:sendto, message:route});
+
+
+	}
+</script>
+
+
+
+</body>
+</html>

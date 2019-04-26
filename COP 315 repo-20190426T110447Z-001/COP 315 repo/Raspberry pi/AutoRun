@@ -1,0 +1,8 @@
+#!/bin/sh
+sudo python main.py &
+while true  
+do  
+sudo timeout 1 cat /dev/ttyAMA0 > ~/data.txt
+sudo python ~/autorun1.py 
+sleep 1
+done
